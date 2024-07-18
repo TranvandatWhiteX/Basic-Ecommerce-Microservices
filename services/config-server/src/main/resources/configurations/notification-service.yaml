@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      username: ${MONGO_ROOT_USER}
+      password: ${MONGO_ROOT_PASSWORD}
+      uri: ${NOTIFICATION_DB_URL}
+      authentication-database: admin
+server:
+  port: 8070

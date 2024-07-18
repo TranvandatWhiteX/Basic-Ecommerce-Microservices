@@ -1,0 +1,45 @@
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+  datasource:
+    url: ${IDENTITY_DB_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  mail:
+    host: localhost
+    port: 1025
+    username: tranvandat
+    password: tranvandat
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+server:
+  port: 8080
+jwt:
+  secret-key: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION_S}
+  refresh-key: ${JWT_REFRESH_SECRET}
+  expiration-rf-key: ${JWT_REFRESH_EXPIRATION_S}
+otp:
+  expiration: ${OTP_EXPIRATION_MINUTES}
+services:
+  customer: ${CUSTOMER_SERVICE}

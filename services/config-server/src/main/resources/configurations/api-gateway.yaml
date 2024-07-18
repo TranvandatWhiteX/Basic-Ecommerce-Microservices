@@ -1,0 +1,23 @@
+server:
+  port: 8222
+api:
+  prefix: ${API_VERSION}
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: identity-service
+          uri: ${IDENTITY_SERVICE}
+          predicates:
+            - Path=${api.prefix}/accounts/**, ${api.prefix}/auth/**
+          filters:
+            - StripPrefix=2
+        - id: customer-service
+          uri: ${CUSTOMER_SERVICE}
+          predicates:
+            - Path=${api.prefix}/customers/**
+          filters:
+            - StripPrefix=2

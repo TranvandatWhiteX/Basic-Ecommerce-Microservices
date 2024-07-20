@@ -78,15 +78,30 @@ public class JwtService {
     public JWTClaimsSet getAllClaimsFromToken(String token) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-            return claims;
+            return signedJWT.getJWTClaimsSet();
         } catch (ParseException e) {
             log.error("Cannot extract token", e);
             throw new RuntimeException(e);
         }
     }
 
-//    public boolean verifyToken(String token, UserDetails userDetails) {
-//        JWSVerifier verifier = new MACVerifier();
-//    }
+    public boolean verifyToken(String token, UserDetails userDetails, Boolean isRefreshToken) throws JOSEException, ParseException {
+        JWSVerifier verifier;
+        if (isRefreshToken) {
+            verifier = new MACVerifier(REFRESH_KEY.getBytes());
+        } else {
+            verifier = new MACVerifier(ACCESS_KEY.getBytes());
+        }
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        var verified = signedJWT.verify(verifier);
+        String username = signedJWT.getJWTClaimsSet().getSubject();
+        return username.equals(userDetails.getUsername()) && verified && !isTokenExpired(token);
+    }
+
+    public boolean isTokenExpired(String token) throws ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+        Date expirationTime = claims.getExpirationTime();
+        return expirationTime.before(new Date());
+    }
 }

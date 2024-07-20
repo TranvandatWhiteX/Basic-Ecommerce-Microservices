@@ -2,6 +2,7 @@ package com.dattran.api_gateway.configs;
 
 import com.dattran.api_gateway.dtos.IntrospectDTO;
 import com.dattran.api_gateway.responses.ApiResponse;
+import com.dattran.api_gateway.responses.IntrospectResponse;
 import com.dattran.api_gateway.services.IdentityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,9 +59,13 @@ public class GatewayAuthenticationFilter implements GlobalFilter, Ordered {
         log.info("Token: {}", token);
         IntrospectDTO introspectDTO = IntrospectDTO.builder().token(token).build();
         return identityService.introspect(introspectDTO).flatMap(introspectResponse -> {
-            if (introspectResponse.getResult().isValid()) return chain.filter(exchange);
+            log.info("IntrospectResponse: {}", introspectResponse);
+            if (introspectResponse.getResult().isValid()) {
+                log.info("Token valid: {}", introspectResponse.getResult());
+                return chain.filter(exchange);
+            }
             return unauthenticated(exchange.getResponse());
-        });
+        }).onErrorResume(throwable -> unauthenticated(exchange.getResponse()));
     }
 
     private boolean isPublicEndpoint(ServerHttpRequest request){

@@ -11,27 +11,19 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: emailRequest:com.dattran.identity_service.app.requests.EmailRequest
   cache:
     type: redis
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-  mail:
-    host: localhost
-    port: 1025
-    username: tranvandat
-    password: tranvandat
-    properties:
-      mail:
-        smtp:
-          trust: "*"
-        auth: true
-        starttls:
-          enabled: true
-        connectiontimeout: 5000
-        timeout: 3000
-        writetimeout: 5000
 server:
   port: 8080
 jwt:
@@ -43,3 +35,4 @@ otp:
   expiration: ${OTP_EXPIRATION_MINUTES}
 services:
   customer: ${CUSTOMER_SERVICE}
+  notification: ${NOTIFICATION_SERVICE}

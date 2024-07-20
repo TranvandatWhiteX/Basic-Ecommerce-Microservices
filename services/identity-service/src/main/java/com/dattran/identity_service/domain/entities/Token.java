@@ -21,6 +21,7 @@ public class Token extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "token_type")
     TokenType tokenType;
 
@@ -39,6 +40,7 @@ public class Token extends BaseEntity {
     @Column(name = "is_revoked")
     boolean isRevoked;
 
+//    For Refresh Token
     @Column(name = "is_expired")
     boolean isExpired;
 

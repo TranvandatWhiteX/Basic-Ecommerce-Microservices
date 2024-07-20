@@ -12,23 +12,35 @@ import com.dattran.identity_service.domain.enums.TokenType;
 import com.dattran.identity_service.domain.exceptions.AppException;
 import com.dattran.identity_service.domain.repositories.AccountRepository;
 import com.dattran.identity_service.domain.repositories.TokenRepository;
+import com.dattran.identity_service.domain.utils.SecurityUtil;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     AccountRepository accountRepository;
     PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
     JwtService jwtService;
+    SecurityUtil securityUtil;
     TokenRepository tokenRepository;
 
     public AuthenticationResponse login(AuthenticationDTO authenticationDTO) {
@@ -57,7 +69,26 @@ public class AuthenticationService {
     }
 
     public IntrospectResponse introspect(IntrospectDTO introspectDTO) {
-        return null;
+        var token = introspectDTO.getToken();
+        JWTClaimsSet claimsSet = jwtService.getAllClaimsFromToken(token);
+        Account account = accountRepository.findByEmail(claimsSet.getSubject())
+                .orElseThrow(()->new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
+        IntrospectResponse introspectResponse = new IntrospectResponse();
+        try {
+            boolean isVerified = jwtService.verifyToken(token, account, false);
+
+            Optional<Token> tokenInDB = tokenRepository.findByAccessTokenId(claimsSet.getJWTID());
+            if (tokenInDB.isEmpty()) {
+                introspectResponse.setValid(false);
+            } else {
+                introspectResponse.setValid(isVerified && !tokenInDB.get().isRevoked());
+            }
+            return introspectResponse;
+        } catch (JOSEException | ParseException e) {
+            log.error("Error while parsing token: ", e);
+            introspectResponse.setValid(false);
+            return introspectResponse;
+        }
     }
 
     private void saveToken(Account account, String accessToken, String refreshToken, TokenType tokenType) {
@@ -74,5 +105,28 @@ public class AuthenticationService {
                 .tokenType(tokenType)
                 .build();
         tokenRepository.save(token);
+    }
+
+    public void logout(HttpServletRequest httpServletRequest) {
+        final String authHeader = httpServletRequest.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new AppException(ResponseStatus.UNAUTHENTICATED);
+        }
+        final String authToken = authHeader.substring(7);
+        JWTClaimsSet claimsSet = jwtService.getAllClaimsFromToken(authToken);
+        Account account = accountRepository.findByEmail(claimsSet.getSubject())
+                .orElseThrow(()->new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
+        List<Token> tokens = tokenRepository.findByAccountId(account.getId());
+        if (!tokens.isEmpty()) {
+            tokens.forEach(token -> {
+                if (!token.isExpired()) {
+                    token.setExpired(true);
+                }
+                if (!token.isRevoked()) {
+                    token.setRevoked(true);
+                }
+            });
+        }
+        tokenRepository.saveAll(tokens);
     }
 }

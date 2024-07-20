@@ -6,6 +6,7 @@ import com.dattran.identity_service.app.responses.ApiResponse;
 import com.dattran.identity_service.app.responses.AuthenticationResponse;
 import com.dattran.identity_service.app.responses.IntrospectResponse;
 import com.dattran.identity_service.domain.services.AuthenticationService;
+import com.dattran.identity_service.domain.utils.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/auth")
 public class AuthenticationController {
     AuthenticationService authenticationService;
+    SecurityUtil securityUtil;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationDTO authenticationDTO, HttpServletRequest httpServletRequest) {
@@ -35,6 +37,18 @@ public class AuthenticationController {
                 .result(authenticationResponse)
                 .status(HttpStatus.OK)
                 .message("Login Successfully!")
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(HttpServletRequest httpServletRequest) {
+        authenticationService.logout(httpServletRequest);
+        return ApiResponse.<Void>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
+                .status(HttpStatus.OK)
+                .message("Logout Successfully!")
                 .build();
     }
 

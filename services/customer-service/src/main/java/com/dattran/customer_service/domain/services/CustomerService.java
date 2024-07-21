@@ -9,6 +9,8 @@ import com.dattran.customer_service.domain.repositories.CustomerRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,5 +43,9 @@ public class CustomerService {
     public Customer getCustomer(String customerId) {
         return customerRepository.findById(customerId)
                 .orElseThrow(()-> new AppException(ResponseStatus.CUSTOMER_NOT_FOUND));
+    }
+
+    public Page<Customer> getAllCustomers(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 }

@@ -1,0 +1,9 @@
+server:
+  port: 8060
+spring:
+  data:
+    mongodb:
+      username: ${MONGO_ROOT_USER}
+      password: ${MONGO_ROOT_PASSWORD}
+      uri: ${PRODUCT_DB_URL}
+      authentication-database: admin

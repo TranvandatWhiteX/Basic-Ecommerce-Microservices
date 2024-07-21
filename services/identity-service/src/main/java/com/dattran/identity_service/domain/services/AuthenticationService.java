@@ -40,7 +40,6 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
     JwtService jwtService;
-    SecurityUtil securityUtil;
     TokenRepository tokenRepository;
 
     public AuthenticationResponse login(AuthenticationDTO authenticationDTO) {

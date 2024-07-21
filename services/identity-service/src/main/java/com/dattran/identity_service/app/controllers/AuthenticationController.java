@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 @RequestMapping("/auth")
 public class AuthenticationController {
     AuthenticationService authenticationService;
-    SecurityUtil securityUtil;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationDTO authenticationDTO, HttpServletRequest httpServletRequest) {

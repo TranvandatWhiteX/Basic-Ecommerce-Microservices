@@ -5,6 +5,7 @@ import com.dattran.identity_service.app.dtos.IntrospectDTO;
 import com.dattran.identity_service.app.responses.AuthenticationResponse;
 import com.dattran.identity_service.app.responses.IntrospectResponse;
 import com.dattran.identity_service.domain.entities.Account;
+import com.dattran.identity_service.domain.entities.Role;
 import com.dattran.identity_service.domain.entities.Token;
 import com.dattran.identity_service.domain.enums.AccountState;
 import com.dattran.identity_service.domain.enums.ResponseStatus;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,12 +77,16 @@ public class AuthenticationService {
         IntrospectResponse introspectResponse = new IntrospectResponse();
         try {
             boolean isVerified = jwtService.verifyToken(token, account, false);
-
             Optional<Token> tokenInDB = tokenRepository.findByAccessTokenId(claimsSet.getJWTID());
-            if (tokenInDB.isEmpty()) {
+            if (tokenInDB.isEmpty() || tokenInDB.get().isRevoked() || !isVerified) {
                 introspectResponse.setValid(false);
             } else {
-                introspectResponse.setValid(isVerified && !tokenInDB.get().isRevoked());
+                introspectResponse.setValid(true);
+                introspectResponse.setEmail(account.getEmail());
+                introspectResponse.setRoles(account.getRoles().stream()
+                        .map(Role::getName).collect(Collectors.toSet()));
+                introspectResponse.setAccountId(account.getId());
+                introspectResponse.setUsername(account.getUsername());
             }
             return introspectResponse;
         } catch (JOSEException | ParseException e) {

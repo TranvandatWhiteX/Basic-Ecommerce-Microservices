@@ -9,10 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -46,6 +43,19 @@ public class CustomerController {
                 .result(customer)
                 .status(HttpStatus.OK)
                 .message("Verify customer Successfully!")
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    ApiResponse<Customer> getCustomer(@PathVariable("id") String customerId, HttpServletRequest httpServletRequest) {
+        Customer customer = customerService.getCustomer(customerId);
+        return ApiResponse.<Customer>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
+                .result(customer)
+                .status(HttpStatus.OK)
+                .message("Get customer Successfully!")
                 .build();
     }
 }

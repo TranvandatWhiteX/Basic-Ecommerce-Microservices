@@ -58,11 +58,18 @@ public class GatewayAuthenticationFilter implements GlobalFilter, Ordered {
         String token = authHeader.get(0).replace("Bearer ", "");
         log.info("Token: {}", token);
         IntrospectDTO introspectDTO = IntrospectDTO.builder().token(token).build();
-        return identityService.introspect(introspectDTO).flatMap(introspectResponse -> {
-            log.info("IntrospectResponse: {}", introspectResponse);
-            if (introspectResponse.getResult().isValid()) {
-                log.info("Token valid: {}", introspectResponse.getResult());
-                return chain.filter(exchange);
+        return identityService.introspect(introspectDTO).flatMap(apiResponse -> {
+            if (apiResponse.getResult().isValid()) {
+                IntrospectResponse introspectResponse = apiResponse.getResult();
+                ServerWebExchange mutatedExchange = exchange.mutate()
+                        .request(exchange.getRequest().mutate()
+                                .header("X-Account-Id", introspectResponse.getAccountId())
+                                .header("X-Username", introspectResponse.getUsername())
+                                .header("X-Email", introspectResponse.getEmail())
+                                .header("X-Roles", String.join(",", introspectResponse.getRoles()))
+                                .build())
+                        .build();
+                return chain.filter(mutatedExchange);
             }
             return unauthenticated(exchange.getResponse());
         }).onErrorResume(throwable -> unauthenticated(exchange.getResponse()));

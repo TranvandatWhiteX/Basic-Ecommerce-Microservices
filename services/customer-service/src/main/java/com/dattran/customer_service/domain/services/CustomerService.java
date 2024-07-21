@@ -37,4 +37,9 @@ public class CustomerService {
         customer.setCustomerState(CustomerState.VERIFIED);
         return customerRepository.save(customer);
     }
+
+    public Customer getCustomer(String customerId) {
+        return customerRepository.findById(customerId)
+                .orElseThrow(()-> new AppException(ResponseStatus.CUSTOMER_NOT_FOUND));
+    }
 }

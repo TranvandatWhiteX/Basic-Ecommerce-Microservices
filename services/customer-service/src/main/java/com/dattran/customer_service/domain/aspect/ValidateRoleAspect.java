@@ -1,8 +1,8 @@
 package com.dattran.customer_service.domain.aspect;
 
 import com.dattran.customer_service.domain.annotations.HasRoles;
-import com.dattran.customer_service.domain.enums.ResponseStatus;
-import com.dattran.customer_service.domain.exceptions.AppException;
+import com.dattran.projectcommon.enums.ResponseStatus;
+import com.dattran.projectcommon.exceptions.AppException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

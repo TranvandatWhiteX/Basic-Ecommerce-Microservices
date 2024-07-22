@@ -19,8 +19,6 @@ public class Customer {
 
     String fullName;
 
-    String email;
-
     LocalDate dob;
 
     Address address;

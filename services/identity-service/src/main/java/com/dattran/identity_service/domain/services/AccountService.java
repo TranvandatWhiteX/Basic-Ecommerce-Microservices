@@ -66,9 +66,7 @@ public class AccountService {
         kafkaTemplate.send("verification", emailRequest);
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .address(accountDTO.getAddress())
-                .age(accountDTO.getAge())
                 .dob(accountDTO.getDob())
-                .email(accountDTO.getEmail())
                 .userId(savedAccount.getId())
                 .fullName(accountDTO.getFullName())
                 .build();

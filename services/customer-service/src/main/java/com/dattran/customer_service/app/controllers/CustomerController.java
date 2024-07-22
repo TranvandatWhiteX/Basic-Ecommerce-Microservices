@@ -2,10 +2,11 @@ package com.dattran.customer_service.app.controllers;
 
 import com.dattran.customer_service.app.dtos.CustomerDTO;
 import com.dattran.customer_service.app.dtos.FilterCustomerDTO;
-import com.dattran.customer_service.app.responses.ApiResponse;
+import com.dattran.customer_service.app.dtos.UpdateCustomerDTO;
 import com.dattran.customer_service.domain.annotations.HasRoles;
 import com.dattran.customer_service.domain.entities.Customer;
 import com.dattran.customer_service.domain.services.CustomerService;
+import com.dattran.projectcommon.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,22 @@ public class CustomerController {
                 .result(customer)
                 .status(HttpStatus.OK)
                 .message("Get customer Successfully!")
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    @HasRoles(roles = {"CUSTOMER"})
+    ApiResponse<Customer> updateCustomer(@PathVariable("id") String customerId,
+                                         @RequestBody UpdateCustomerDTO customerDTO,
+                                         HttpServletRequest httpServletRequest) {
+        Customer customer = customerService.updateCustomer(customerId, customerDTO);
+        return ApiResponse.<Customer>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
+                .result(customer)
+                .status(HttpStatus.OK)
+                .message("Update customer Successfully!")
                 .build();
     }
 

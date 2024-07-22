@@ -17,11 +17,7 @@ public class CustomerDTO {
     @NotNull(message = "Full name must be not null.")
     String fullName;
 
-    Integer age;
-
     LocalDate dob;
-
-    String email;
 
     @NotNull(message = "User id must be not null.")
     String userId;

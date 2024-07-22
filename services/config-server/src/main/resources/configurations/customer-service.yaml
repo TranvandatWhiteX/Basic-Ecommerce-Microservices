@@ -6,4 +6,4 @@ spring:
       uri: ${CUSTOMER_DB_URL}
       authentication-database: admin
 server:
-  port: 8090
+  port: 8089

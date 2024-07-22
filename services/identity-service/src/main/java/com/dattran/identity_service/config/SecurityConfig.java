@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,12 +30,13 @@ import org.springframework.web.filter.CorsFilter;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     AccountRepository accountRepository;
     CustomJwtDecoder customJwtDecoder;
 
     String[] PUBLIC_ENDPOINTS = {
-            "/accounts", "/accounts/verify", "/auth/login", "/auth/introspect"
+            "/accounts", "/accounts/verify", "/accounts/forgot-password", "/accounts/verify-pass", "/auth/login", "/auth/introspect"
     };
 
     @Bean

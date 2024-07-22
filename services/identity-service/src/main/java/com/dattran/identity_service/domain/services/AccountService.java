@@ -1,11 +1,10 @@
 package com.dattran.identity_service.domain.services;
 
-import com.dattran.identity_service.app.dtos.AccountDTO;
-import com.dattran.identity_service.app.dtos.CustomerDTO;
-import com.dattran.identity_service.app.dtos.VerifyDTO;
+import com.dattran.identity_service.app.dtos.*;
 import com.dattran.identity_service.app.requests.EmailRequest;
 import com.dattran.identity_service.app.responses.AccountResponse;
 import com.dattran.identity_service.app.responses.ApiResponse;
+import com.dattran.identity_service.app.responses.VerifyResponse;
 import com.dattran.identity_service.domain.entities.Account;
 import com.dattran.identity_service.domain.entities.Customer;
 import com.dattran.identity_service.domain.entities.Role;
@@ -37,7 +36,6 @@ public class AccountService {
     PasswordEncoder passwordEncoder;
     AccountRepository accountRepository;
     OtpService otpService;
-    NotificationClient notificationClient;
     CustomerClient customerClient;
     RoleRepository roleRepository;
     KafkaTemplate<String, EmailRequest> kafkaTemplate;
@@ -81,7 +79,7 @@ public class AccountService {
         return toAccountResponse(savedAccount);
     }
 
-    public String verifyAccount(VerifyDTO verifyDTO) {
+    public VerifyResponse verifyAccount(VerifyDTO verifyDTO) {
         Account account = accountRepository.findById(verifyDTO.getAccountId())
                 .orElseThrow(() -> new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
         if (otpService.validateOtp(verifyDTO.getAccountId(), verifyDTO.getOtp())) {
@@ -90,25 +88,41 @@ public class AccountService {
             ValueOperations<String, Object> ops = redisTemplate.opsForValue();
             String customerId = (String) ops.get(savedAccount.getId() + "-" + savedAccount.getUsername());
             customerClient.verifyCustomer(customerId);
-            return "Verify account success!";
+            return VerifyResponse.builder().isVerified(true).message("Verify Account Success").build();
         } else {
-            if (!otpService.isOtpExpired(verifyDTO.getAccountId())) {
-                return "Wrong OTP!";
-            }
-            String newOtp = otpService.generateOTP(6);
-            otpService.storeOtp(account.getId(), newOtp);
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("otp", newOtp);
-            variables.put("username", account.getUsername());
-            EmailRequest emailRequest = EmailRequest.builder()
-                    .to(account.getEmail())
-                    .subject("Resend OTP Verification")
-                    .template("send-otp.html")
-                    .variables(variables)
-                    .build();
-            kafkaTemplate.send("verification", emailRequest);
-            return "OTP is expired! New OTP was sent to your email!";
+            return handleVerifyFailed(verifyDTO, account, account.getId());
         }
+    }
+
+    public VerifyResponse verifyChangePassword(VerifyDTO verifyDTO) {
+        Account account = accountRepository.findById(verifyDTO.getAccountId())
+                .orElseThrow(() -> new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
+        if (otpService.validateOtp(verifyDTO.getAccountId()+"-"+"pass", verifyDTO.getOtp())) {
+            account.setPassword(account.getNewPassword());
+            accountRepository.save(account);
+            return VerifyResponse.builder().isVerified(true).message("Change password success").build();
+        } else {
+            return handleVerifyFailed(verifyDTO, account, account.getId()+"-"+"pass");
+        }
+    }
+
+    private VerifyResponse handleVerifyFailed(VerifyDTO verifyDTO, Account account, String otpKey) {
+        if (!otpService.isOtpExpired(verifyDTO.getAccountId())) {
+            return VerifyResponse.builder().isVerified(false).message("Wrong OTP").build();
+        }
+        String newOtp = otpService.generateOTP(6);
+        otpService.storeOtp(otpKey, newOtp);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("otp", newOtp);
+        variables.put("username", account.getUsername());
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(account.getEmail())
+                .subject("Resend OTP Verification")
+                .template("send-otp.html")
+                .variables(variables)
+                .build();
+        kafkaTemplate.send("verification", emailRequest);
+        return VerifyResponse.builder().isVerified(false).message("OTP is expired! New OTP was sent to your email!").build();
     }
 
     private Account toAccount(AccountDTO accountDTO) {
@@ -134,5 +148,37 @@ public class AccountService {
                 .roles(account.getRoles())
                 .username(account.getUsername())
                 .build();
+    }
+
+    public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+        Account account = accountRepository.findByEmail(forgotPasswordDTO.getEmail())
+                .orElseThrow(() -> new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
+        changePass(account, forgotPasswordDTO.getPassword());
+    }
+
+    public void changePassword(String id, ChangePasswordDTO changePasswordDTO) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ResponseStatus.ACCOUNT_NOT_FOUND));
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), account.getPassword())) {
+            throw new AppException(ResponseStatus.OLD_PASSWORD_INCORRECT);
+        }
+        changePass(account, changePasswordDTO.getPassword());
+    }
+
+    private void changePass(Account account, String newPassword) {
+        account.setNewPassword(passwordEncoder.encode(newPassword));
+        String otp = otpService.generateOTP(6);
+        otpService.storeOtp(account.getId()+"-"+"pass", otp);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("otp", otp);
+        variables.put("username", account.getUsername());
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(account.getEmail())
+                .subject("Change Password Verification")
+                .template("send-otp.html")
+                .variables(variables)
+                .build();
+        kafkaTemplate.send("verification", emailRequest);
+        accountRepository.save(account);
     }
 }

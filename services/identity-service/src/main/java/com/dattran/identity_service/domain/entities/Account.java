@@ -33,6 +33,9 @@ public class Account extends BaseEntity implements UserDetails {
 
     String password;
 
+    @Column(name = "new_password")
+    String newPassword;
+
     @Column(name = "email", unique = true)
     String email;
 

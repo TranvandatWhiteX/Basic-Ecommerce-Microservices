@@ -39,7 +39,7 @@ public class GatewayAuthenticationFilter implements GlobalFilter, Ordered {
 
     @NonFinal
     private String[] publicEndpoints = {
-            "/accounts", "/accounts/verify", "/auth/login"
+            "/accounts", "/accounts/verify", "/accounts/verify-pass", "/auth/login", "/accounts/forgot-password"
     };
 
     @Value("${api.prefix}")

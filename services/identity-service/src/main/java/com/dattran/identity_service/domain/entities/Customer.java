@@ -4,6 +4,8 @@ import com.dattran.identity_service.domain.enums.CustomerState;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
+
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
@@ -26,4 +28,8 @@ public class Customer {
     String userId;
 
     CustomerState customerState;
+
+    Instant createdAt;
+
+    Instant updatedAt;
 }

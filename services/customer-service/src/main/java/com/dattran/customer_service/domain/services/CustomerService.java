@@ -1,6 +1,7 @@
 package com.dattran.customer_service.domain.services;
 
 import com.dattran.customer_service.app.dtos.CustomerDTO;
+import com.dattran.customer_service.app.dtos.FilterCustomerDTO;
 import com.dattran.customer_service.domain.entities.Customer;
 import com.dattran.customer_service.domain.enums.CustomerState;
 import com.dattran.customer_service.domain.enums.ResponseStatus;
@@ -45,7 +46,7 @@ public class CustomerService {
                 .orElseThrow(()-> new AppException(ResponseStatus.CUSTOMER_NOT_FOUND));
     }
 
-    public Page<Customer> getAllCustomers(Pageable pageable) {
-        return customerRepository.findAll(pageable);
+    public Page<Customer> getAllCustomers(FilterCustomerDTO filterCustomerDTO, Pageable pageable) {
+        return customerRepository.filterCustomers(filterCustomerDTO, pageable);
     }
 }

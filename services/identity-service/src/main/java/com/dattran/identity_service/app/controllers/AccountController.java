@@ -1,11 +1,12 @@
 package com.dattran.identity_service.app.controllers;
 
 import com.dattran.identity_service.app.dtos.AccountDTO;
-import com.dattran.identity_service.app.dtos.AuthenticationDTO;
+import com.dattran.identity_service.app.dtos.ChangePasswordDTO;
+import com.dattran.identity_service.app.dtos.ForgotPasswordDTO;
 import com.dattran.identity_service.app.dtos.VerifyDTO;
 import com.dattran.identity_service.app.responses.AccountResponse;
 import com.dattran.identity_service.app.responses.ApiResponse;
-import com.dattran.identity_service.app.responses.AuthenticationResponse;
+import com.dattran.identity_service.app.responses.VerifyResponse;
 import com.dattran.identity_service.domain.services.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -39,15 +40,50 @@ public class AccountController {
     }
 
     @PostMapping("/verify")
-    public ApiResponse<String> verifyAccount(@RequestBody VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
-        String message  = accountService.verifyAccount(verifyDTO);
-        return ApiResponse.<String>builder()
+    public ApiResponse<Void> verifyAccount(@RequestBody VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
+        VerifyResponse verified = accountService.verifyAccount(verifyDTO);
+        return ApiResponse.<Void>builder()
                 .timestamp(LocalDateTime.now().toString())
                 .path(httpServletRequest.getRequestURI())
                 .requestMethod(httpServletRequest.getMethod())
-                .result(message)
+                .status(verified.isVerified() ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(verified.getMessage())
+                .build();
+    }
+
+    @PostMapping("/verify-pass")
+    public ApiResponse<Void> verifyPass(@RequestBody VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
+        VerifyResponse verified = accountService.verifyChangePassword(verifyDTO);
+        return ApiResponse.<Void>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
+                .status(verified.isVerified() ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .message(verified.getMessage())
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ApiResponse<Void> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO, HttpServletRequest httpServletRequest) {
+        accountService.forgotPassword(forgotPasswordDTO);
+        return ApiResponse.<Void>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
                 .status(HttpStatus.OK)
-                .message(message)
+                .message("Verify password with otp in your email")
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, HttpServletRequest httpServletRequest, @PathVariable String id) {
+        accountService.changePassword(id, changePasswordDTO);
+        return ApiResponse.<Void>builder()
+                .timestamp(LocalDateTime.now().toString())
+                .path(httpServletRequest.getRequestURI())
+                .requestMethod(httpServletRequest.getMethod())
+                .status(HttpStatus.OK)
+                .message("Verify password with otp in your email")
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.dattran.customer_service.app.controllers;
 
 import com.dattran.customer_service.app.dtos.CustomerDTO;
+import com.dattran.customer_service.app.dtos.FilterCustomerDTO;
 import com.dattran.customer_service.app.responses.ApiResponse;
 import com.dattran.customer_service.domain.annotations.HasRoles;
 import com.dattran.customer_service.domain.entities.Customer;
@@ -65,8 +66,9 @@ public class CustomerController {
 
     @GetMapping
     @HasRoles(roles = {"ADMIN"})
-    ApiResponse<Page<Customer>> getAllCustomers(HttpServletRequest httpServletRequest, Pageable pageable) {
-        Page<Customer> customers = customerService.getAllCustomers(pageable);
+    ApiResponse<Page<Customer>> getAllCustomers(@ModelAttribute FilterCustomerDTO filterCustomerDTO,
+                                                HttpServletRequest httpServletRequest, Pageable pageable) {
+        Page<Customer> customers = customerService.getAllCustomers(filterCustomerDTO, pageable);
         return ApiResponse.<Page<Customer>>builder()
                 .timestamp(LocalDateTime.now().toString())
                 .path(httpServletRequest.getRequestURI())

@@ -13,6 +13,7 @@ public enum ResponseStatus {
     USERNAME_OR_EMAIL_EXISTED(500, "Username or email existed"),
     PASSWORD_NOT_MATCH(500, "Password not match"),
     ACCOUNT_NOT_ACTIVATED(500, "Account not activated"),
+    OLD_PASSWORD_INCORRECT(500, "Old password incorrect"),
     SEND_OTP_FAILED(500, "Send OTP failed.");
     private final int code;
     private final String message;

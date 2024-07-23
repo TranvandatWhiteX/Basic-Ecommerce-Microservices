@@ -11,6 +11,7 @@
         <module name="customer-service" />
         <module name="api-gateway" />
         <module name="product-service" />
+        <module name="upload-service" />
         <module name="identity-service" />
         <module name="discovery-service" />
         <module name="notification-service" />
@@ -20,6 +21,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
         </processorPath>
         <module name="project-common" />
@@ -35,6 +37,7 @@
       <module name="identity-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
+      <module name="upload-service" options="" />
     </option>
   </component>
 </project>

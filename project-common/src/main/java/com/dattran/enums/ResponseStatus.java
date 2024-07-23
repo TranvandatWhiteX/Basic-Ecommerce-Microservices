@@ -19,7 +19,9 @@ public enum ResponseStatus {
     UNAUTHORIZED(401, "Unauthorized"),
     SEND_EMAIL_FAILED(500, "Send Email failed."),
     FORBIDDEN(403, "Forbidden."),
-    BRAND_ALREADY_EXIST(500, "Brand is already existed."),;
+    BRAND_ALREADY_EXIST(500, "Brand is already existed."),
+    CANNOT_UPLOAD_FILE(500, "Cannot upload file."),
+    NO_FILES_FOUND(500, "No files found."),;
     private final int code;
     private final String message;
 }

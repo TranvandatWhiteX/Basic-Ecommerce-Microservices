@@ -1,5 +1,6 @@
 package com.dattran.productservice.app.controllers;
 
+import com.dattran.annotations.HasRoles;
 import com.dattran.productservice.app.dtos.BrandDTO;
 import com.dattran.productservice.domain.entities.Brand;
 import com.dattran.productservice.domain.services.BrandService;
@@ -18,6 +19,7 @@ public class BrandController {
     BrandService brandService;
 
     @PostMapping
+    @HasRoles(roles = {"ADMIN"})
     public ApiResponse<Brand> createBrand(@RequestBody BrandDTO brandDTO) {
         return null;
     }

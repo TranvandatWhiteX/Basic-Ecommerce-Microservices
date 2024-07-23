@@ -18,7 +18,8 @@ public enum ResponseStatus {
     CUSTOMER_NOT_FOUND(500, "Customer not found."),
     UNAUTHORIZED(401, "Unauthorized"),
     SEND_EMAIL_FAILED(500, "Send Email failed."),
-    FORBIDDEN(403, "Forbidden.");
+    FORBIDDEN(403, "Forbidden."),
+    BRAND_ALREADY_EXIST(500, "Brand is already existed."),;
     private final int code;
     private final String message;
 }

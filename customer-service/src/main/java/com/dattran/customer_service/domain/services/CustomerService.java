@@ -26,7 +26,7 @@ public class CustomerService {
                 .fullName(customerDTO.getFullName())
                 .dob(customerDTO.getDob())
                 .address(customerDTO.getAddress())
-                .userId(customerDTO.getUserId())
+                .accountId(customerDTO.getUserId())
                 .customerState(CustomerState.PENDING)
                 .build();
         return customerRepository.save(customer);
@@ -39,9 +39,13 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Customer getCustomer(String customerId) {
-        return customerRepository.findById(customerId)
-                .orElseThrow(()-> new AppException(ResponseStatus.CUSTOMER_NOT_FOUND));
+    public Customer getCustomer(String customerId, String accountId) {
+       Customer customer = customerRepository.findById(customerId)
+               .orElseThrow(()-> new AppException(ResponseStatus.CUSTOMER_NOT_FOUND));
+       if (!customer.getAccountId().equals(accountId)) {
+          throw new AppException(ResponseStatus.FORBIDDEN);
+       }
+        return customer;
     }
 
     public Page<Customer> getAllCustomers(FilterCustomerDTO filterCustomerDTO, Pageable pageable) {

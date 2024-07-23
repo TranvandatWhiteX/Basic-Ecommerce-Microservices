@@ -31,7 +31,7 @@ public class Customer {
 
     Address address;
 
-    String userId;
+    String accountId;
 
     CustomerState customerState;
 

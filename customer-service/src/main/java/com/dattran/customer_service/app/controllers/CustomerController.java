@@ -1,12 +1,14 @@
 package com.dattran.customer_service.app.controllers;
 
+import com.dattran.annotations.HasRoles;
+import com.dattran.aspect.ValidateRoleAspect;
 import com.dattran.customer_service.app.dtos.CustomerDTO;
 import com.dattran.customer_service.app.dtos.FilterCustomerDTO;
 import com.dattran.customer_service.app.dtos.UpdateCustomerDTO;
-import com.dattran.customer_service.domain.annotations.HasRoles;
 import com.dattran.customer_service.domain.entities.Customer;
 import com.dattran.customer_service.domain.services.CustomerService;
 import com.dattran.responses.ApiResponse;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +55,10 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     @HasRoles(roles = {"CUSTOMER"})
-    ApiResponse<Customer> getCustomer(@PathVariable("id") String customerId, HttpServletRequest httpServletRequest) {
-        Customer customer = customerService.getCustomer(customerId);
+    ApiResponse<Customer> getCustomer(@PathVariable("id") String customerId,
+                                      @RequestHeader("X-Account-Id") String accountId,
+                                      HttpServletRequest httpServletRequest) {
+        Customer customer = customerService.getCustomer(customerId, accountId);
         return ApiResponse.<Customer>builder()
                 .timestamp(LocalDateTime.now().toString())
                 .path(httpServletRequest.getRequestURI())

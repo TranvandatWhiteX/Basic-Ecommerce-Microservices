@@ -17,7 +17,8 @@ public enum ResponseStatus {
     SEND_OTP_FAILED(500, "Send OTP failed."),
     CUSTOMER_NOT_FOUND(500, "Customer not found."),
     UNAUTHORIZED(401, "Unauthorized"),
-    SEND_EMAIL_FAILED(500, "Send Email failed.");
+    SEND_EMAIL_FAILED(500, "Send Email failed."),
+    FORBIDDEN(403, "Forbidden.");
     private final int code;
     private final String message;
 }

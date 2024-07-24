@@ -21,3 +21,11 @@ spring:
             - Path=${api.prefix}/customers/**
           filters:
             - StripPrefix=2
+        - id: product-service
+          uri: ${PRODUCT_SERVICE}
+          predicates:
+            - Path=${api.prefix}/brands/**
+          filters:
+            - StripPrefix=2
+services:
+  identity: ${IDENTITY_SERVICE}

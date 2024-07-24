@@ -26,7 +26,6 @@ public class UploadController {
     AwsService awsService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @HasRoles(roles = {"ADMIN"})
     public ApiResponse<List<String>> upload(@ModelAttribute UploadRequest uploadRequest,
                                             HttpServletRequest httpServletRequest) {
         List<String> links = awsService.uploadFiles(uploadRequest.getFiles(), uploadRequest.getFolder());

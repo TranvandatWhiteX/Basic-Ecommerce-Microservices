@@ -21,7 +21,8 @@ public enum ResponseStatus {
     FORBIDDEN(403, "Forbidden."),
     BRAND_ALREADY_EXIST(500, "Brand is already existed."),
     CANNOT_UPLOAD_FILE(500, "Cannot upload file."),
-    NO_FILES_FOUND(500, "No files found."),;
+    NO_FILES_FOUND(500, "No files found."),
+    CANNOT_GET_LINKS(500, "Can't get links."),;
     private final int code;
     private final String message;
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,10 +18,10 @@ public class BrandDTO {
     @NotNull(message = "Name must not be null.")
     String name;
 
-    List<Image> images;
+    List<MultipartFile> files;
 
     @AssertTrue(message = "Images must have at least 1.")
     private boolean validateImage() {
-        return !images.isEmpty();
+        return !files.isEmpty();
     }
 }

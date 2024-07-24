@@ -1,10 +1,7 @@
 package com.dattran.api_gateway.configs;
 
 import com.dattran.api_gateway.repositories.IdentityClient;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -18,10 +15,13 @@ import java.util.List;
 
 @Configuration
 public class WebClientConfig {
+    @Value("${services.identity}")
+    String identityService;
+
     @Bean
     WebClient webClient() {
         return WebClient.builder()
-                .baseUrl("http://localhost:8080")
+                .baseUrl(identityService)
                 .build();
     }
 

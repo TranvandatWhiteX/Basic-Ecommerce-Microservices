@@ -7,3 +7,5 @@ spring:
       password: ${MONGO_ROOT_PASSWORD}
       uri: ${PRODUCT_DB_URL}
       authentication-database: admin
+services:
+  upload: ${UPLOAD_SERVICE}

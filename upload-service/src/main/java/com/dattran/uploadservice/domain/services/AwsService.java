@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
@@ -70,6 +72,20 @@ public class AwsService {
             log.warn("Upload Exception {}", e.getMessage());
             throw new AppException(ResponseStatus.CANNOT_UPLOAD_FILE);
         }
+    }
+
+    public CompletableFuture<Void> deleteFile(String fileKey) {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileKey)
+                .build();
+        return s3AsyncClient.deleteObject(deleteObjectRequest)
+                .thenApply(DeleteObjectResponse::deleteMarker)
+                .thenAccept(marker -> log.info("Deleted file: {}", fileKey))
+                .exceptionally(throwable -> {
+                    log.warn("Failed to delete file: {}", fileKey, throwable);
+                    throw new AppException(ResponseStatus.CANNOT_DELETE_FILE);
+                });
     }
 
     private String generateUrl(String objectKey) {

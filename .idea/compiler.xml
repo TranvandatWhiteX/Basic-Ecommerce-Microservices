@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
         <module name="customer-service" />
+        <module name="project-common" />
         <module name="api-gateway" />
         <module name="product-service" />
         <module name="upload-service" />
@@ -16,27 +17,17 @@
         <module name="discovery-service" />
         <module name="notification-service" />
       </profile>
-      <profile name="Annotation profile for Basic-Microservice-Ecommerce" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
-        </processorPath>
-        <module name="project-common" />
-      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="api-gateway" options="-parameters" />
-      <module name="config-server" options="-parameters" />
+      <module name="api-gateway" options="" />
+      <module name="config-server" options="" />
       <module name="customer-service" options="" />
-      <module name="discovery-service" options="-parameters" />
-      <module name="identity-service" options="-parameters" />
+      <module name="discovery-service" options="" />
+      <module name="identity-service" options="" />
       <module name="notification-service" options="-parameters" />
-      <module name="product-service" options="-parameters" />
+      <module name="product-service" options="" />
       <module name="upload-service" options="" />
     </option>
   </component>

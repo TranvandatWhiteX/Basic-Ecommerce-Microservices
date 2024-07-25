@@ -39,3 +39,6 @@ build/
 
 ### environment ###
 .env
+
+### Redis cache ###
+redis-data

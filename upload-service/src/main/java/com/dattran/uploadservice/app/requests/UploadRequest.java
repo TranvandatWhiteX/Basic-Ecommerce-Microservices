@@ -17,4 +17,6 @@ public class UploadRequest {
 
     @NotNull(message = "Folder must not be null.")
     String folder;
+
+    String groupName;
 }

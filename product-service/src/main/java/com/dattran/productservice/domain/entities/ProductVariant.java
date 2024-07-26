@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Document(collection = "product-variants")
 @Getter
@@ -19,7 +20,9 @@ public class ProductVariant extends BaseEntity {
 
     BigDecimal price;
 
-    Image image;
+    Long quantity;
+
+    Map<String, String> attributes;
 
     Boolean isDeleted;
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Product extends BaseEntity {
@@ -27,6 +28,8 @@ public class Product extends BaseEntity {
     Map<String, String> info;
 
     List<Image> images;
+
+    Long quantity;
 
     BigDecimal minPrice;
 

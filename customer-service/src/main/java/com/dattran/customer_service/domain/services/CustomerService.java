@@ -22,6 +22,9 @@ public class CustomerService {
     CustomerRepository customerRepository;
 
     public Customer createCustomer(CustomerDTO customerDTO) {
+        if (customerRepository.existsByAccountId(customerDTO.getUserId())) {
+            throw new AppException(ResponseStatus.ACCOUNT_HAS_ONE_PROFILE);
+        }
         Customer customer = Customer.builder()
                 .fullName(customerDTO.getFullName())
                 .dob(customerDTO.getDob())

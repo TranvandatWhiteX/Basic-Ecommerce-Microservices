@@ -43,21 +43,21 @@ public class AwsService {
     S3AsyncClient s3AsyncClient;
     ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    public List<String> uploadFiles(List<MultipartFile> files, String folder) {
-        if (files.isEmpty()) {
+    public List<String> uploadFiles(com.dattran.uploadservice.app.requests.UploadRequest uploadRequest) {
+        if (uploadRequest.getFiles().isEmpty()) {
             throw new AppException(ResponseStatus.NO_FILES_FOUND);
         }
-        List<CompletableFuture<String>> futures = files.stream()
-                .map(file -> CompletableFuture.supplyAsync(() -> uploadFile(file, folder)))
+        List<CompletableFuture<String>> futures = uploadRequest.getFiles().stream()
+                .map(file -> CompletableFuture.supplyAsync(() -> uploadFile(file, uploadRequest.getFolder(), uploadRequest.getGroupName())))
                 .toList();
         return futures.stream()
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
     }
 
-    private String uploadFile(MultipartFile file, String folder) {
+    private String uploadFile(MultipartFile file, String folder, String groupName) {
         String fileName = UUID.randomUUID() + "_" + Paths.get(file.getOriginalFilename()).getFileName().toString();
-        String keyName = new StringJoiner("/").add(folder).add(fileName).toString();
+        String keyName = new StringJoiner("/").add(folder).add(groupName).add(fileName).toString();
         try {
             AsyncRequestBody requestBody = AsyncRequestBody.fromInputStream(file.getInputStream(), file.getSize(), executor);
             UploadRequest uploadRequest = UploadRequest.builder()

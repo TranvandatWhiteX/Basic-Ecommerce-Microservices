@@ -24,7 +24,7 @@ spring:
         - id: product-service
           uri: ${PRODUCT_SERVICE}
           predicates:
-            - Path=${api.prefix}/brands/**
+            - Path=${api.prefix}/brands/**, ${api.prefix}/categories/**, ${api.prefix}/products/**, ${api.prefix}/uploads/**
           filters:
             - StripPrefix=2
 services:

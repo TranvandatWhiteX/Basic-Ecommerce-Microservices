@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category extends BaseEntity {
     @Id
@@ -22,6 +23,24 @@ public class Category extends BaseEntity {
 
     Boolean isDeleted;
 
+    Integer level;
+
+    @DBRef
+    Category parentCategory;
+
+    @DBRef
+    List<Category> subCategories;
+
     @DBRef
     List<Product> products;
+
+    public int getLevel() {
+        int level = 1;
+        Category parentCategory = this.getParentCategory();
+        while (parentCategory != null) {
+            level++;
+            parentCategory = parentCategory.getParentCategory();
+        }
+        return level;
+    }
 }

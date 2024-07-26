@@ -30,24 +30,14 @@ public class BrandService {
         UploadRequest uploadRequest = UploadRequest.builder()
                 .files(brandDTO.getFiles())
                 .folder(UploadFolder.BRAND_IMAGES.getVal())
+                .groupName(brandDTO.getName())
                 .build();
         List<String> links = uploadService.getLinksAfterUpload(uploadRequest);
         Brand brand = Brand.builder()
                 .name(brandDTO.getName())
                 .isDeleted(false)
-                .images(getImagesFromLinks(links))
+                .images(uploadService.getImagesFromLinks(links))
                 .build();
         return brandRepository.save(brand);
-    }
-
-    private List<Image> getImagesFromLinks(List<String> links) {
-        List<Image> images = new ArrayList<>();
-        for (int i=0; i<links.size(); i++) {
-            Image image = new Image();
-            image.setUrl(links.get(i));
-            image.setIsCover(i == 0);
-            images.add(image);
-        }
-        return images;
     }
 }

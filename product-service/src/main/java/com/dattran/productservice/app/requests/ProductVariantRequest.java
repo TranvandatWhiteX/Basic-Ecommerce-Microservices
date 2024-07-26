@@ -1,23 +1,20 @@
 package com.dattran.productservice.app.requests;
 
+import com.dattran.productservice.app.dtos.ProductVariantDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UploadRequest {
-    List<MultipartFile> files;
+public class ProductVariantRequest {
+    @NotNull(message = "Product Id must not be null.")
+    String productId;
 
-    @NotNull(message = "Folder must not be null.")
-    String folder;
-
-    String groupName;
+    List<ProductVariantDTO> productVariantDTOS;
 }

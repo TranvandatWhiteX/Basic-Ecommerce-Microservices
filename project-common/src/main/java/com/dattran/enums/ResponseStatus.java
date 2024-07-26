@@ -23,7 +23,9 @@ public enum ResponseStatus {
     CANNOT_UPLOAD_FILE(500, "Cannot upload file."),
     NO_FILES_FOUND(400, "No files found."),
     CANNOT_GET_LINKS(500, "Can't get links."),
-    CANNOT_DELETE_FILE(500, "Can't delete file."),;
+    CANNOT_DELETE_FILE(500, "Can't delete file."),
+    CATEGORY_NOT_FOUND(400, "Category not found."),
+    ACCOUNT_HAS_ONE_PROFILE(400, "Account has one profile."),;
     private final int code;
     private final String message;
 }

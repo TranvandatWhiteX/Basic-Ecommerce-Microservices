@@ -7,6 +7,7 @@ import com.dattran.productservice.domain.entities.Category;
 import com.dattran.productservice.domain.services.CategoryService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +28,7 @@ public class CategoryController {
 
     @PostMapping
     @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<Category> createCategory(@RequestBody CategoryDTO categoryDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Category> createCategory(@RequestBody @Valid CategoryDTO categoryDTO, HttpServletRequest httpServletRequest) {
         Category category = categoryService.createCategory(categoryDTO);
         return ApiResponse.<Category>builder()
                 .timestamp(LocalDateTime.now().toString())

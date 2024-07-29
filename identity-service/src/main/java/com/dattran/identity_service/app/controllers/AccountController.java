@@ -9,6 +9,7 @@ import com.dattran.identity_service.app.responses.VerifyResponse;
 import com.dattran.identity_service.domain.services.AccountService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +28,7 @@ public class AccountController {
     AccountService accountService;
 
     @PostMapping
-    public ApiResponse<AccountResponse> createAccount(@RequestBody AccountDTO accountDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<AccountResponse> createAccount(@RequestBody @Valid AccountDTO accountDTO, HttpServletRequest httpServletRequest) {
         AccountResponse accountResponse = accountService.createAccount(accountDTO);
         return ApiResponse.<AccountResponse>builder()
                 .timestamp(LocalDateTime.now().toString())
@@ -40,7 +41,7 @@ public class AccountController {
     }
 
     @PostMapping("/verify")
-    public ApiResponse<Void> verifyAccount(@RequestBody VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Void> verifyAccount(@RequestBody @Valid VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
         VerifyResponse verified = accountService.verifyAccount(verifyDTO);
         return ApiResponse.<Void>builder()
                 .timestamp(LocalDateTime.now().toString())
@@ -52,7 +53,7 @@ public class AccountController {
     }
 
     @PostMapping("/verify-pass")
-    public ApiResponse<Void> verifyPass(@RequestBody VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Void> verifyPass(@RequestBody @Valid VerifyDTO verifyDTO, HttpServletRequest httpServletRequest) {
         VerifyResponse verified = accountService.verifyChangePassword(verifyDTO);
         return ApiResponse.<Void>builder()
                 .timestamp(LocalDateTime.now().toString())
@@ -64,7 +65,7 @@ public class AccountController {
     }
 
     @PostMapping("/forgot-password")
-    public ApiResponse<Void> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Void> forgotPassword(@RequestBody @Valid ForgotPasswordDTO forgotPasswordDTO, HttpServletRequest httpServletRequest) {
         accountService.forgotPassword(forgotPasswordDTO);
         return ApiResponse.<Void>builder()
                 .timestamp(LocalDateTime.now().toString())
@@ -76,7 +77,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO, HttpServletRequest httpServletRequest, @PathVariable String id) {
+    public ApiResponse<Void> changePassword(@RequestBody @Valid ChangePasswordDTO changePasswordDTO, HttpServletRequest httpServletRequest, @PathVariable String id) {
         accountService.changePassword(id, changePasswordDTO);
         return ApiResponse.<Void>builder()
                 .timestamp(LocalDateTime.now().toString())

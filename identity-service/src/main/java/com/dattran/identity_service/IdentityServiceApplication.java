@@ -1,5 +1,6 @@
 package com.dattran.identity_service;
 
+import com.dattran.annotations.EnableCommon;
 import com.dattran.identity_service.domain.entities.Role;
 import com.dattran.identity_service.domain.enums.AccountRole;
 import com.dattran.identity_service.domain.repositories.RoleRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @SpringBootApplication
 @EnableFeignClients
+@EnableCommon
 public class IdentityServiceApplication {
 
 	public static void main(String[] args) {

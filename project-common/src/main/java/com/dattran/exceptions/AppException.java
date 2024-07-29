@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AppException extends RuntimeException{
+public class AppException extends RuntimeException {
     private ResponseStatus responseStatus;
 
     public AppException(ResponseStatus responseStatus) {

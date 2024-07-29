@@ -4,6 +4,7 @@ import com.dattran.notification_service.app.requests.EmailRequest;
 import com.dattran.notification_service.domain.services.EmailService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +26,7 @@ public class EmailController {
     EmailService emailService;
 
     @PostMapping("/email")
-    public ApiResponse<Boolean> sendEmail(@RequestBody EmailRequest emailRequest, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Boolean> sendEmail(@RequestBody @Valid EmailRequest emailRequest, HttpServletRequest httpServletRequest) {
         CompletableFuture<Boolean> future = emailService.sendEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getTemplate(), emailRequest.getVariables());
         ApiResponse<Boolean> response = ApiResponse.<Boolean>builder()
                 .timestamp(LocalDateTime.now().toString())

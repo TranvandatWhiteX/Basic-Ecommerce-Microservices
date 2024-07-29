@@ -26,40 +26,19 @@ import java.util.StringTokenizer;
 public class ProductService {
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
-    UploadService uploadService;
 
     public Product createProduct(ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new AppException(ResponseStatus.CATEGORY_NOT_FOUND));
-        UploadRequest uploadRequest = UploadRequest.builder()
-                .files(productDTO.getImages())
-                .folder(UploadFolder.PRODUCT_IMAGES.getVal())
-                .groupName(productDTO.getName())
-                .build();
-        List<String> links = uploadService.getLinksAfterUpload(uploadRequest);
         Product product = Product.builder()
                 .name(productDTO.getName())
                 .description(productDTO.getDescription())
                 .category(category)
-                .images(uploadService.getImagesFromLinks(links))
+                .images(productDTO.getImages())
                 .quantity(productDTO.getQuantity())
-                .info(extractInfo(productDTO.getInfo()))
+                .info(productDTO.getInfo())
                 .minPrice(productDTO.getPrice())
                 .build();
         return productRepository.save(product);
-    }
-
-    public Product addVariantToProduct(List<ProductVariantDTO> productVariantDTOS) {
-        return null;
-    }
-
-    private Map<String, String> extractInfo(String info) {
-        Map<String, String> infoMap = new HashMap<>();
-        String[] infoArray = info.split(",");
-        for (String infoElement : infoArray) {
-            StringTokenizer tokenizer = new StringTokenizer(infoElement, ":");
-            infoMap.put(tokenizer.nextToken(), tokenizer.nextToken());
-        }
-        return infoMap;
     }
 }

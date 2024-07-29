@@ -6,6 +6,7 @@ import com.dattran.productservice.domain.entities.Category;
 import com.dattran.productservice.domain.services.UploadService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,11 +30,13 @@ public class UploadController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<List<String>> upload(@ModelAttribute UploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
+    public ApiResponse<List<String>> upload(@ModelAttribute @Valid UploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
+        List<String> links = uploadService.getLinksAfterUpload(uploadRequest);
         return ApiResponse.<List<String>>builder()
                 .timestamp(LocalDateTime.now().toString())
                 .path(httpServletRequest.getRequestURI())
                 .requestMethod(httpServletRequest.getMethod())
+                .result(links)
                 .status(HttpStatus.CREATED)
                 .message("Category Created Successfully!")
                 .build();

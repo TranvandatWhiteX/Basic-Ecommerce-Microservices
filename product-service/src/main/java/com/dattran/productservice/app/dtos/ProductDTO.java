@@ -1,5 +1,6 @@
 package com.dattran.productservice.app.dtos;
 
+import com.dattran.productservice.domain.entities.Image;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -7,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -22,7 +24,7 @@ public class ProductDTO {
     @NotNull(message = "Category Id must be not null.")
     String categoryId;
 
-    String info;
+    Map<String, String> info;
 
     @NotNull(message = "Quantity must be not null.")
     Long quantity;
@@ -30,5 +32,7 @@ public class ProductDTO {
     @NotNull(message = "Price must be not null.")
     BigDecimal price;
 
-    List<MultipartFile> images;
+    List<Image> images;
+
+    List<ProductVariantDTO> productVariants;
 }

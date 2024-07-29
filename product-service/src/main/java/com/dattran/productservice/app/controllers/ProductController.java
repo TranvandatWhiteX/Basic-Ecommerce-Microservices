@@ -8,6 +8,7 @@ import com.dattran.productservice.domain.entities.Product;
 import com.dattran.productservice.domain.services.ProductService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +28,7 @@ public class ProductController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<Product> createProduct(@ModelAttribute ProductDTO productDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Product> createProduct(@ModelAttribute @Valid ProductDTO productDTO, HttpServletRequest httpServletRequest) {
         Product product = productService.createProduct(productDTO);
         return ApiResponse.<Product>builder()
                 .timestamp(LocalDateTime.now().toString())
@@ -36,18 +37,6 @@ public class ProductController {
                 .result(product)
                 .status(HttpStatus.CREATED)
                 .message("Product Created Successfully!")
-                .build();
-    }
-
-    @PostMapping("/variant")
-    @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<Product> addVariantToProduct(@RequestBody List<ProductVariantDTO> productVariantDTOS, HttpServletRequest httpServletRequest) {
-        return ApiResponse.<Product>builder()
-                .timestamp(LocalDateTime.now().toString())
-                .path(httpServletRequest.getRequestURI())
-                .requestMethod(httpServletRequest.getMethod())
-                .status(HttpStatus.CREATED)
-                .message("Add Variant Successfully!")
                 .build();
     }
 }

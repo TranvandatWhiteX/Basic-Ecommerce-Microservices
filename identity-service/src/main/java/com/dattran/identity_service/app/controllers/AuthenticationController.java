@@ -7,6 +7,7 @@ import com.dattran.identity_service.app.responses.IntrospectResponse;
 import com.dattran.identity_service.domain.services.AuthenticationService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +27,7 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationDTO authenticationDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<AuthenticationResponse> login(@RequestBody @Valid AuthenticationDTO authenticationDTO, HttpServletRequest httpServletRequest) {
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationDTO);
         return ApiResponse.<AuthenticationResponse>builder()
                 .timestamp(LocalDateTime.now().toString())

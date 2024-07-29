@@ -21,22 +21,15 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BrandService {
     BrandRepository brandRepository;
-    UploadService uploadService;
 
     public Brand createBrand(BrandDTO brandDTO) {
         if (brandRepository.existsByName(brandDTO.getName())) {
             throw new AppException(ResponseStatus.BRAND_ALREADY_EXIST);
         }
-        UploadRequest uploadRequest = UploadRequest.builder()
-                .files(brandDTO.getFiles())
-                .folder(UploadFolder.BRAND_IMAGES.getVal())
-                .groupName(brandDTO.getName())
-                .build();
-        List<String> links = uploadService.getLinksAfterUpload(uploadRequest);
         Brand brand = Brand.builder()
                 .name(brandDTO.getName())
                 .isDeleted(false)
-                .images(uploadService.getImagesFromLinks(links))
+                .images(brandDTO.getImages())
                 .build();
         return brandRepository.save(brand);
     }

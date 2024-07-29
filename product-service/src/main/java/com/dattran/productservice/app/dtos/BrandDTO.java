@@ -18,10 +18,10 @@ public class BrandDTO {
     @NotNull(message = "Name must not be null.")
     String name;
 
-    List<MultipartFile> files;
+    List<Image> images;
 
     @AssertTrue(message = "Images must have at least 1.")
     private boolean validateImage() {
-        return !files.isEmpty();
+        return !images.isEmpty();
     }
 }

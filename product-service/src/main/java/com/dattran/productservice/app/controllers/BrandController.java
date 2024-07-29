@@ -6,6 +6,7 @@ import com.dattran.productservice.domain.entities.Brand;
 import com.dattran.productservice.domain.services.BrandService;
 import com.dattran.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +25,7 @@ public class BrandController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<Brand> createBrand(@ModelAttribute BrandDTO brandDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Brand> createBrand(@ModelAttribute @Valid BrandDTO brandDTO, HttpServletRequest httpServletRequest) {
         Brand brand  = brandService.createBrand(brandDTO);
         return ApiResponse.<Brand>builder()
                 .timestamp(LocalDateTime.now().toString())

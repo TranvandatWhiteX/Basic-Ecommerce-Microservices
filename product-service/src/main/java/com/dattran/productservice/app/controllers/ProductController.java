@@ -26,9 +26,9 @@ import java.util.List;
 public class ProductController {
     ProductService productService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @HasRoles(roles = {"ADMIN"})
-    public ApiResponse<Product> createProduct(@ModelAttribute @Valid ProductDTO productDTO, HttpServletRequest httpServletRequest) {
+    public ApiResponse<Product> createProduct(@RequestBody @Valid ProductDTO productDTO, HttpServletRequest httpServletRequest) {
         Product product = productService.createProduct(productDTO);
         return ApiResponse.<Product>builder()
                 .timestamp(LocalDateTime.now().toString())
